@@ -1,7 +1,6 @@
 import numpy as np
 import tensorflow as tf
 from sklearn.metrics.pairwise import cosine_similarity
-import umap
 import os
 import zipfile
 import h5py
@@ -60,9 +59,33 @@ class VAEService:
             print(f"Warning: taste_vectors.npy not found at {taste_vectors_path}, using random placeholder")
             self.taste_vectors = np.random.randn(568, 8).astype(np.float32)
 
-        # Fit UMAP on the real/loaded taste vectors
-        reducer = umap.UMAP(n_components=2, random_state=42)
-        self.umap_embeddings = reducer.fit_transform(self.taste_vectors)
+        # Resolve UMAP embeddings path
+        umap_embeddings_path = os.environ.get("UMAP_EMBEDDINGS_PATH")
+        if not umap_embeddings_path or not os.path.exists(umap_embeddings_path):
+            umap_embeddings_path = os.path.join(service_dir, "..", "models", "umap_embeddings.npy")
+        if not os.path.exists(umap_embeddings_path):
+            workspace_dir = os.path.abspath(os.path.join(service_dir, "..", "..", "..", ".."))
+            umap_embeddings_path = os.path.join(workspace_dir, "umap_embeddings.npy")
+
+        # Load or fit UMAP embeddings
+        self.umap_embeddings = None
+        if os.path.exists(umap_embeddings_path):
+            try:
+                self.umap_embeddings = np.load(umap_embeddings_path).astype(np.float32)
+                print(f"Loaded precomputed UMAP embeddings from {umap_embeddings_path}")
+            except Exception as e:
+                print(f"Error loading precomputed UMAP embeddings: {e}")
+                self.umap_embeddings = None
+
+        if self.umap_embeddings is None:
+            try:
+                print("Precomputed UMAP embeddings not found or failed to load. Fitting UMAP on the fly...")
+                import umap
+                reducer = umap.UMAP(n_components=2, random_state=42)
+                self.umap_embeddings = reducer.fit_transform(self.taste_vectors)
+            except Exception as e:
+                print(f"Error fitting UMAP on the fly: {e}")
+                self.umap_embeddings = np.random.randn(len(self.taste_vectors), 2).astype(np.float32)
 
     def _load_weights_manually(self, keras_file_path):
         with zipfile.ZipFile(keras_file_path) as z:
