@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Segoe UI", Arial, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: Consolas, "Cascadia Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, "Liberation Mono", "Courier New", monospace;
+  --font-display: "Segoe UI", Arial, ui-sans-serif, system-ui, sans-serif;
+  
+  --color-bg-base: #070810;
+  --color-bg-surface: #0d0f1c;
+  --color-bg-card: rgba(255,255,255,0.04);
+  --color-border: rgba(255,255,255,0.07);
+  --color-border-bright: rgba(255,255,255,0.14);
+  --color-text: #e8eaf0;
+  --color-text-muted: rgba(232,234,240,0.5);
+  --color-accent-blue: #5b8dff;
+  --color-accent-teal: #00d4aa;
+  --color-accent-amber: #f5a623;
+  --color-accent-violet: #a78bfa;
+  --color-accent-coral: #ff6b6b;
+
+  --animate-pulse-glow: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-particle-drift: particle-drift 20s linear infinite;
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: .7; filter: brightness(1.2); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+  @keyframes particle-drift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(100px, -50px); }
+  }
+}
+
+:root {
+  --bg-base: #070810;
+  --bg-surface: #0d0f1c;
+  --bg-card: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.07);
+  --border-bright: rgba(255,255,255,0.14);
+  --text: #e8eaf0;
+  --text-muted: rgba(232,234,240,0.5);
+  --accent-blue: #5b8dff;
+  --accent-teal: #00d4aa;
+  --accent-amber: #f5a623;
+  --accent-violet: #a78bfa;
+  --accent-coral: #ff6b6b;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+}
+
+.text-gradient-blue {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet), var(--accent-teal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

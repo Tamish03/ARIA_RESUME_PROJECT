@@ -1,0 +1,10 @@
+fastapi==0.111.0
+uvicorn[standard]
+tensorflow
+numpy
+scikit-learn
+pandas
+pydantic-settings
+python-dotenv
+umap-learn
+scipy
