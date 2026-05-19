@@ -8,8 +8,18 @@ class RecommenderService:
     def __init__(self):
         # Resolve paths relative to workspace directory
         service_dir = os.path.dirname(os.path.abspath(__file__))
-        workspace_dir = os.path.abspath(os.path.join(service_dir, "..", "..", "..", ".."))
-        swarm_model_path = os.path.join(workspace_dir, "swarm_best_model.keras")
+        
+        # 1. Environment variable (if defined)
+        swarm_model_path = os.environ.get("SWARM_MODEL_PATH")
+        
+        # 2. Package models directory fallback
+        if not swarm_model_path or not os.path.exists(swarm_model_path):
+            swarm_model_path = os.path.join(service_dir, "..", "models", "swarm_best_model.keras")
+            
+        # 3. Outer workspace directory fallback (backward compatibility for dev environment)
+        if not os.path.exists(swarm_model_path):
+            workspace_dir = os.path.abspath(os.path.join(service_dir, "..", "..", "..", ".."))
+            swarm_model_path = os.path.join(workspace_dir, "swarm_best_model.keras")
 
         if os.path.exists(swarm_model_path):
             try:

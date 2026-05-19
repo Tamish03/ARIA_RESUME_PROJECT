@@ -12,9 +12,24 @@ class VAEService:
     def __init__(self):
         # Resolve paths relative to workspace directory
         service_dir = os.path.dirname(os.path.abspath(__file__))
-        workspace_dir = os.path.abspath(os.path.join(service_dir, "..", "..", "..", ".."))
-        taste_vectors_path = os.path.join(workspace_dir, "taste_vectors.npy")
-        vae_model_path = os.path.join(workspace_dir, "best_taset_vae.keras")
+        
+        # 1. Environment variables (if defined)
+        taste_vectors_path = os.environ.get("TASTE_VECTORS_PATH")
+        vae_model_path = os.environ.get("VAE_MODEL_PATH")
+        
+        # 2. Package models directory fallback
+        if not taste_vectors_path or not os.path.exists(taste_vectors_path):
+            taste_vectors_path = os.path.join(service_dir, "..", "models", "taste_vectors.npy")
+        if not vae_model_path or not os.path.exists(vae_model_path):
+            vae_model_path = os.path.join(service_dir, "..", "models", "best_taset_vae.keras")
+            
+        # 3. Outer workspace directory fallback (backward compatibility for dev environment)
+        if not os.path.exists(taste_vectors_path):
+            workspace_dir = os.path.abspath(os.path.join(service_dir, "..", "..", "..", ".."))
+            taste_vectors_path = os.path.join(workspace_dir, "taste_vectors.npy")
+        if not os.path.exists(vae_model_path):
+            workspace_dir = os.path.abspath(os.path.join(service_dir, "..", "..", "..", ".."))
+            vae_model_path = os.path.join(workspace_dir, "best_taset_vae.keras")
 
         # Build VAE models (input_dim=1681, latent_dim=8)
         self.vae, self.encoder, self.decoder = build_vae(input_dim=1681, latent_dim=8)
